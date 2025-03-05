@@ -1,0 +1,99 @@
+#include <stdlib.h>
+
+double **continuous_matrix_creation(int m, int n) {
+    /* 
+    Input:
+        - int m: Number of rows in matrix
+        - int n: Number of columns in matrix
+    Returns:
+        - Continuous mxn matrix, all elements are zero instantiated by default due to use of calloc
+    */
+    int i;
+    int j;
+    int *flattened_matrix;
+    int **matrix;
+
+    flattened_matrix = calloc(m * n, sizeof(int));
+    matrix = calloc(m, sizeof(int *));
+    for (i = 0; i < m; i++) {
+        matrix[i] = flattened_matrix + i * n;
+    }
+
+    return matrix;
+}
+
+double **matrix_deep_copy(double **matrix_to_copy, int m, int n) {
+    /* 
+    Input:
+        - double matrix_to_copy[][]: Matrix whose values we're copying, by copying just values instead of pointers we are essentially deep-copying it.
+        - int m: Number of rows in matrix we're copying
+        - int n: Number of columns in matrix we're copying
+    Returns:
+        - Deep copy of given matrix
+    */
+    double **copy = continuous_matrix_creation(m, n);
+    int i;
+    int j;
+
+    for (i = 0; i < m; i++) {
+        for (j = 0; j < n; j++) {
+            copy[i][j] = matrix_to_copy[i][j];
+        }
+    }
+    return copy;
+}
+
+
+double **matrix_multiplication(double **matrix, double **other_matrix, int m, int s, int n) {
+    /*
+    Input:
+        - double matrix[][]: Left matrix we are multiplying by.
+        - double other_matrix[][]: Right matrix we are multiplying by.
+        - int m: Number of rows in left matrix.
+        - int s: Number of columns in left matrix / Number of rows in right matrix
+        - int n: Number of columns in right matrix.
+    Returns:
+        mxn result of multiplying the matrices.
+    */
+    int i;
+    int j;
+    int k;
+    double **result_matrix;
+    result_matrix = continuous_matrix_creation(m, n);
+    
+    for (i = 0; i < m; i++) {
+        for (j = 0; j < n; j++) {
+            for (k = 0; k < s; k++) {
+                result_matrix[i][j] += matrix[i][k] * other_matrix[k][j];
+            }
+        }
+    }
+    return result_matrix;
+}
+
+void free_matrix(double **matrix, int num_rows) {
+    /* Frees up matrix memory by freeing every pointer to a row and then freeing the pointer to the array of row pointers.
+    Input:
+        - double matrix[][]: Matrix whose memory we are freeing
+        - int num_rows: Number of rows in the matrix
+    */
+    if (matrix == NULL) return;  /* Safety check */
+
+    for (int i = 0; i < num_rows; i++) {
+        free(matrix[i]);  /* Free each row */
+    }
+    free(matrix);  /* Free the row pointer array */
+}
+
+void free_continuous_matrix(double **continuous_matrix) {
+    /* Frees up continuous matrix memory by freeing the pointer to the flattened array, at continuous_matrix[0] and 
+       then freeing continuous_matrix: the array(pointer) of "pseudo-row" pointers(which are part of the flattened array allocation and therefore dont need to be freed)
+       which point to the appropriate row positions in the flattened array.
+    Input:
+        - double matrix[][]: Matrix whose memory we are freeing
+        - int num_rows: Number of rows in the matrix
+    */
+    if (continuous_matrix == NULL) return;
+    free(continuous_matrix[0]);  // Free the flattened array
+    free(continuous_matrix);     // Free the array of row pointers
+}
