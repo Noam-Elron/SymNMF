@@ -1,1 +1,8 @@
 /.vscode
+symnmf.cpython-310-x86_64-linux-gnu.so
+build/temp.linux-x86_64-3.10/utils.o
+build/temp.linux-x86_64-3.10/symnmfmodule.o
+build/temp.linux-x86_64-3.10/symnmf.o
+build/temp.linux-x86_64-3.10/sym.o
+build/temp.linux-x86_64-3.10/norm.o
+build/temp.linux-x86_64-3.10/diagonal.o

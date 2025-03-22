@@ -10,7 +10,7 @@ typedef struct datapoints_wrapper {
     double **datapoints;
     Py_ssize_t num_points;
     Py_ssize_t point_dimension;
-}
+} datapoints_wrapper;
 
 
 datapoints_wrapper *datapoints_to_c_array(PyObject *datapoints_py_ptr) {
@@ -22,7 +22,7 @@ datapoints_wrapper *datapoints_to_c_array(PyObject *datapoints_py_ptr) {
 
     wrapper = malloc(sizeof(datapoints_wrapper));
     wrapper->num_points = PyList_Size(datapoints_py_ptr);
-    wrapper->datapoints = (int**)calloc(num_points, sizeof(*double));
+    wrapper->datapoints = (double**)calloc(wrapper->num_points, sizeof(double*));
 
     for (i = 0; i < wrapper->num_points; i++) {
         temp_datapoint_py_ptr = PyList_GetItem(datapoints_py_ptr, i);
@@ -31,7 +31,7 @@ datapoints_wrapper *datapoints_to_c_array(PyObject *datapoints_py_ptr) {
             exit(EXIT_FAILURE);
         }
         wrapper->point_dimension = PyList_Size(datapoints_py_ptr);
-        wrapper->datapoints[i] = (int*)calloc(point_dimension, sizeof(double));
+        wrapper->datapoints[i] = (double*)calloc(wrapper->point_dimension, sizeof(double));
         for (j = 0; j < wrapper->point_dimension; j++) {
             coord_py_ptr = PyList_GetItem(temp_datapoint_py_ptr, j);
             if (Py_IS_TYPE(coord_py_ptr, &PyFloat_Type) == 0) {
@@ -48,16 +48,16 @@ datapoints_wrapper *datapoints_to_c_array(PyObject *datapoints_py_ptr) {
 PyObject *c_matrix_to_py_matrix(double **matrix, Py_ssize_t m, Py_ssize_t n) {
     PyObject *matrix_py;
     PyObject *temp_matrix_row_py;
-    PyObject *matrix_entry_py
+    PyObject *matrix_entry_py;
     Py_ssize_t i;
     Py_ssize_t j;
     matrix_py = PyList_New(m);
     for (i = 0; i < m; i++) {
         temp_matrix_row_py = PyList_New(n);
-        PyList_Append(matrix_py, temp_matrix_row_py);
+        PyList_SetItem(matrix_py, i, temp_matrix_row_py);
         for (j = 0; j < n; j++) {
             matrix_entry_py = PyFloat_FromDouble(matrix[i][j]);
-            PyList_Append(temp_matrix_row_py, matrix_entry_py);
+            PyList_SetItem(temp_matrix_row_py, j, matrix_entry_py);
         }
     }
     return matrix_py;
@@ -68,7 +68,7 @@ PyObject *c_matrix_to_py_matrix(double **matrix, Py_ssize_t m, Py_ssize_t n) {
 static PyObject* sym_c_wrapper(PyObject *self, PyObject *args) {
     PyObject *datapoints_py_ptr;
     datapoints_wrapper *wrapper;
-    double **similarity_matrix;
+    double **sim_matrix;
     
     if (!PyArg_ParseTuple(args, "O", &datapoints_py_ptr)) {
         printf("An Error has Occurred\n");
@@ -80,15 +80,15 @@ static PyObject* sym_c_wrapper(PyObject *self, PyObject *args) {
         exit(EXIT_FAILURE);
     }
     wrapper = datapoints_to_c_array(datapoints_py_ptr);
-    similarity_matrix = similarity_matrix(wrapper->datapoints, wrapper->num_points, wrapper->point_dimension);
-    return c_matrix_to_py_matrix(similarity_matrix, wrapper->num_points, wrapper->point_dimension);
+    sim_matrix = similarity_matrix(wrapper->datapoints, wrapper->num_points, wrapper->point_dimension);
+    return c_matrix_to_py_matrix(sim_matrix, wrapper->num_points, wrapper->point_dimension);
 }
 
 static PyObject* diag_c_wrapper(PyObject *self, PyObject *args) {
     PyObject *datapoints_py_ptr;
     datapoints_wrapper *wrapper;
-    double **similarity_matrix;
-    double **diagonal_matrix;
+    double **sim_matrix;
+    double **diag_matrix;
 
     if (!PyArg_ParseTuple(args, "O", &datapoints_py_ptr)) {
         printf("An Error has Occurred\n");
@@ -101,17 +101,17 @@ static PyObject* diag_c_wrapper(PyObject *self, PyObject *args) {
     }
 
     wrapper = datapoints_to_c_array(datapoints_py_ptr);
-    similarity_matrix = similarity_matrix(wrapper->datapoints, wrapper->num_points, wrapper->point_dimension);
-    diagonal_matrix = diagonal_matrix(similarity_matrix, wrapper->num_points);
-    return c_matrix_to_py_matrix(diagonal_matrix, wrapper->num_points, wrapper->num_points);
+    sim_matrix = similarity_matrix(wrapper->datapoints, wrapper->num_points, wrapper->point_dimension);
+    diag_matrix = diagonal_matrix(sim_matrix, wrapper->num_points, wrapper->num_points);
+    return c_matrix_to_py_matrix(diag_matrix, wrapper->num_points, wrapper->num_points);
 }
 
 static PyObject* norm_c_wrapper(PyObject *self, PyObject *args) {
     PyObject *datapoints_py_ptr;
     datapoints_wrapper *wrapper;
-    double **similarity_matrix;
-    double **diagonal_matrix;
-    double **norm_matrix;
+    double **sim_matrix;
+    double **diag_matrix;
+    double **nm_matrix;
 
     if (!PyArg_ParseTuple(args, "O", &datapoints_py_ptr)) {
         printf("An Error has Occurred\n");
@@ -124,14 +124,15 @@ static PyObject* norm_c_wrapper(PyObject *self, PyObject *args) {
     }
 
     wrapper = datapoints_to_c_array(datapoints_py_ptr);
-    similarity_matrix = similarity_matrix(wrapper->datapoints, wrapper->num_points, wrapper->point_dimension);
-    diagonal_matrix = diagonal_matrix(similarity_matrix, wrapper->num_points);
-    norm_matrix = norm_matrix(similarity_matrix, diagonal_matrix, wrapper->num_points);
-    return c_matrix_to_py_matrix(norm_matrix, wrapper->num_points, wrapper->num_points);
+    sim_matrix = similarity_matrix(wrapper->datapoints, wrapper->num_points, wrapper->point_dimension);
+    diag_matrix = diagonal_matrix(sim_matrix, wrapper->num_points, wrapper->num_points);
+    nm_matrix = norm_matrix(sim_matrix, diag_matrix, wrapper->num_points);
+    return c_matrix_to_py_matrix(nm_matrix, wrapper->num_points, wrapper->num_points);
 }
 
 static PyObject* symnmf_c_wrapper(PyObject *self, PyObject *args) {
-    
+    PyObject *symnmf_matrix;
+    return symnmf_matrix;
 }
 
 static PyMethodDef SymNMFModules[] = {

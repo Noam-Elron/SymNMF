@@ -3,7 +3,7 @@ import os
 import numpy as np
 import math
 from typing import List, Union
-
+import symnmf
 
 def euclidean_distance(point, other) -> float:
     """
@@ -42,7 +42,7 @@ def parse() -> argparse.Namespace:
 def read_file(filepath):
     points = []
     with open(filepath, "r", encoding="utf-8") as file:
-        for line in input:
+        for line in file:
             line = line.strip()
             point = line.split(",")
             point = list(map(float, point))
@@ -72,7 +72,17 @@ def main():
     if goal not in goals_mapping:
         print("An Error Has Occurred")
         return
-    
+
+    if goals_mapping[goal] == 0:
+        print(symnmf.symnmf())
+    elif goals_mapping[goal] == 1:
+        print(symnmf.sym(points))
+    elif goals_mapping[goal] == 2:
+        print(symnmf.diag(points))
+    elif goals_mapping[goal] == 3:
+        print(symnmf.norm(points))
+
+
 
 if __name__ == "__main__":
     main()
