@@ -24,7 +24,7 @@ double **diagonal_matrix(double **similarity_matrix, int num_points) {
         - int num_points: Number of points in Datapoints, this is also the size of the diagonal matrix as the matrix has a diagonal 
           of length n (each diagonal entry corresponds to a row in the similarity matrix)
     Returns:
-        2D Diagonal Matrix, Diagonal entry i equals sum of row i in Similarity Matrix, all other entries are 0 (taken care of by continuous_matrix_creation_function who uses calloc)
+        2D Square Diagonal Matrix, Diagonal entry i equals sum of row i in Similarity Matrix, all other entries are 0 (taken care of by continuous_matrix_creation_function who uses calloc)
     */
     int i;
     int j;
