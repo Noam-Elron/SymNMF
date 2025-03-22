@@ -1,9 +1,7 @@
 #TODO:
-1. Python - C Interface
-2. H Initialization in Python
-3. H Calculation in C
-4. Clustering using H
-5. Analysis of KMeans vs Symnmf.
-6. Makefile
+1. H aka SymNMF Calculation in C
+2. Clustering using H
+3. Analysis of KMeans vs Symnmf.
+4. Makefile
 
 

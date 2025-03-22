@@ -21,6 +21,20 @@ def euclidean_distance(point, other) -> float:
         total += pow((point[i] - other[i]), 2)
     return math.sqrt(total)
 
+def initialize_H(norm_matrix, K):
+    np.random.seed(1234)
+    m = np.mean(norm_matrix)
+    dimension = len(norm_matrix)
+    H = []
+
+    for i in range(dimension*dimension):
+        val = np.random.uniform(0, 2 * math.sqrt(m / K))
+        H.append(val)
+    H = np.reshape(H, (dimension, dimension))
+    return H
+    
+
+
 def parse() -> argparse.Namespace:
     """
 
@@ -74,7 +88,9 @@ def main():
         return
 
     if goals_mapping[goal] == 0:
-        print(symnmf.symnmf())
+        norm_matrix = symnmf.norm(points)
+        H = initialize_H(norm_matrix, K)
+        print(symnmf.symnmf(H, norm_matrix))
     elif goals_mapping[goal] == 1:
         print(symnmf.sym(points))
     elif goals_mapping[goal] == 2:
