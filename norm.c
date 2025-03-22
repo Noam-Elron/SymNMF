@@ -1,7 +1,7 @@
+#include <math.h>
 #include "utils.h"
 #include "sym.h"
 #include "diagonal.h"
-#include <math.h>
 
 double **diagonal_matrix_multiplication(double **matrix, double **diagonal_matrix, int num_points, int multiplication_direction) {
     /*
@@ -50,13 +50,11 @@ double **norm_matrix(double **similarity_matrix, double **diagonal_matrix, int n
     Returns:
         2D Norm Matrix W: W = D^(-1/2) * A * D^(-1/2)
     */
-    int i;
-    int j;
     double **norm_matrix;
     double **diag_exponentiated;
     double **temp_result;
     diag_exponentiated = matrix_deep_copy(diagonal_matrix, num_points, num_points);
-    diag_exponentiated = diagonal_matrix_exponentiation(diag_exponentiated, -1/2, num_points);
+    diag_exponentiated = diagonal_matrix_exponentiation(diag_exponentiated, -0.5, num_points);
     temp_result = diagonal_matrix_multiplication(similarity_matrix, diag_exponentiated, num_points, 0); /* Left Multiplication: D^(-1/2) * A  */
     norm_matrix = diagonal_matrix_multiplication(temp_result, diag_exponentiated, num_points, 1); /* Right Multiplication by prev result: (D^(-1/2) * A) * D^(-1/2) */
 

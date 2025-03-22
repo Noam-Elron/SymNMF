@@ -27,7 +27,6 @@ double **diagonal_matrix(double **similarity_matrix, int num_points) {
         2D Square Diagonal Matrix, Diagonal entry i equals sum of row i in Similarity Matrix, all other entries are 0 (taken care of by continuous_matrix_creation_function who uses calloc)
     */
     int i;
-    int j;
     double **diagonal_matrix;
     
     diagonal_matrix = continuous_matrix_creation(num_points, num_points);

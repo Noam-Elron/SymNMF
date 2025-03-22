@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 double **continuous_matrix_creation(int m, int n) {
     /* 
@@ -9,12 +10,11 @@ double **continuous_matrix_creation(int m, int n) {
         - Continuous mxn matrix, all elements are zero instantiated by default due to use of calloc
     */
     int i;
-    int j;
-    int *flattened_matrix;
-    int **matrix;
+    double *flattened_matrix;
+    double **matrix;
 
-    flattened_matrix = calloc(m * n, sizeof(int));
-    matrix = calloc(m, sizeof(int *));
+    flattened_matrix = calloc(m * n, sizeof(double));
+    matrix = calloc(m, sizeof(double *));
     for (i = 0; i < m; i++) {
         matrix[i] = flattened_matrix + i * n;
     }
@@ -96,4 +96,23 @@ void free_continuous_matrix(double **continuous_matrix) {
     if (continuous_matrix == NULL) return;
     free(continuous_matrix[0]);  // Free the flattened array
     free(continuous_matrix);     // Free the array of row pointers
+}
+
+
+
+void print_matrix(double **matrix, int m, int n) {
+    /* 
+    Input:
+        - double **matrix: The matrix to be printed
+        - int m: Number of rows
+        - int n: Number of columns
+    */
+    int i, j;
+    for (i = 0; i < m; i++) {
+        for (j = 0; j < n; j++) {
+            printf("%f ", matrix[i][j]);  // Print each element as an integer (no decimal)
+        }
+        printf("\n");
+    }
+    printf("\n");
 }

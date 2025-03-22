@@ -32,7 +32,7 @@ double **similarity_matrix(double **datapoints, int num_points, int point_dimens
 
     int i;
     int j;
-    int **sym_matrix;
+    double **sym_matrix;
     double distance_squared;
 
     sym_matrix = continuous_matrix_creation(num_points, num_points);
