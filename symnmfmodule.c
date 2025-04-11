@@ -1,6 +1,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#include "utils.h"
 #include "sym.h"
 #include "diagonal.h"
 #include "norm.h"
@@ -69,6 +70,7 @@ static PyObject* sym_c_wrapper(PyObject *self, PyObject *args) {
     PyObject *datapoints_matrix_py_ptr;
     c_matrix_wrapper *datapoints_wrapper;
     double **sim_matrix;
+    PyObject* sym_matrix_py_ptr;
     
     if (!PyArg_ParseTuple(args, "O", &datapoints_matrix_py_ptr)) {
         printf("An Error has Occurred in C at sym_c_wrapper func err 1\n");
@@ -81,7 +83,11 @@ static PyObject* sym_c_wrapper(PyObject *self, PyObject *args) {
     }
     datapoints_wrapper = py_matrix_to_c_matrix(datapoints_matrix_py_ptr);
     sim_matrix = similarity_matrix(datapoints_wrapper->matrix, datapoints_wrapper->rows, datapoints_wrapper->cols);
-    return c_matrix_to_py_matrix(sim_matrix, datapoints_wrapper->rows, datapoints_wrapper->cols);
+    sym_matrix_py_ptr = c_matrix_to_py_matrix(sim_matrix, datapoints_wrapper->rows, datapoints_wrapper->cols);
+    free_matrix(datapoints_wrapper->matrix, datapoints_wrapper->rows);
+    free(datapoints_wrapper);
+    free_continuous_matrix(sim_matrix);
+    return sym_matrix_py_ptr;;
 }
 
 static PyObject* diag_c_wrapper(PyObject *self, PyObject *args) {
@@ -89,6 +95,7 @@ static PyObject* diag_c_wrapper(PyObject *self, PyObject *args) {
     c_matrix_wrapper *datapoints_wrapper;
     double **sim_matrix;
     double **diag_matrix;
+    PyObject *diag_matrix_py_ptr;
 
     if (!PyArg_ParseTuple(args, "O", &datapoints_matrix_py_ptr)) {
         printf("An Error has Occurred in C at diag_c_wrapper func err 1\n");
@@ -103,7 +110,12 @@ static PyObject* diag_c_wrapper(PyObject *self, PyObject *args) {
     datapoints_wrapper = py_matrix_to_c_matrix(datapoints_matrix_py_ptr);
     sim_matrix = similarity_matrix(datapoints_wrapper->matrix, datapoints_wrapper->rows, datapoints_wrapper->cols);
     diag_matrix = diagonal_matrix(sim_matrix, datapoints_wrapper->rows, datapoints_wrapper->rows);
-    return c_matrix_to_py_matrix(diag_matrix, datapoints_wrapper->rows, datapoints_wrapper->rows);
+    diag_matrix_py_ptr = c_matrix_to_py_matrix(diag_matrix, datapoints_wrapper->rows, datapoints_wrapper->rows);
+    free_matrix(datapoints_wrapper->matrix, datapoints_wrapper->rows);
+    free(datapoints_wrapper);
+    free_continuous_matrix(sim_matrix);
+    free_continuous_matrix(diag_matrix);
+    return diag_matrix_py_ptr;;
 }
 
 static PyObject* norm_c_wrapper(PyObject *self, PyObject *args) {
@@ -112,23 +124,30 @@ static PyObject* norm_c_wrapper(PyObject *self, PyObject *args) {
     double **sim_matrix;
     double **diag_matrix;
     double **nm_matrix;
+    PyObject* norm_matrix_py_ptr;
 
     if (!PyArg_ParseTuple(args, "O", &datapoints_matrix_py_ptr)) {
         printf("An Error has Occurred in C at norm_c_wrapper func err 1\n");
         exit(EXIT_FAILURE);
     }
-
     if (!PyList_Check(datapoints_matrix_py_ptr)) {
         printf("An Error has Occurred in C at norm_c_wrapper func err 2\n");
         exit(EXIT_FAILURE);
     }
-
     datapoints_wrapper = py_matrix_to_c_matrix(datapoints_matrix_py_ptr);
     sim_matrix = similarity_matrix(datapoints_wrapper->matrix, datapoints_wrapper->rows, datapoints_wrapper->cols);
     diag_matrix = diagonal_matrix(sim_matrix, datapoints_wrapper->rows, datapoints_wrapper->rows);
     nm_matrix = norm_matrix(sim_matrix, diag_matrix, datapoints_wrapper->rows);
-    return c_matrix_to_py_matrix(nm_matrix, datapoints_wrapper->rows, datapoints_wrapper->rows);
+    norm_matrix_py_ptr = c_matrix_to_py_matrix(nm_matrix, datapoints_wrapper->rows, datapoints_wrapper->rows);
+    free_matrix(datapoints_wrapper->matrix, datapoints_wrapper->rows);
+    free(datapoints_wrapper);
+    free_continuous_matrix(sim_matrix);
+    free_continuous_matrix(diag_matrix);
+    free_continuous_matrix(nm_matrix);
+    return norm_matrix_py_ptr;;
 }
+
+
 
 
 static PyObject* symnmf_c_wrapper(PyObject *self, PyObject *args) {
@@ -137,8 +156,8 @@ static PyObject* symnmf_c_wrapper(PyObject *self, PyObject *args) {
     c_matrix_wrapper *norm_wrapper;
     PyObject *initial_H_py_ptr;
     PyObject *norm_matrix_py_ptr;
+    PyObject *symnmf_matrix_py_ptr;
     
-
     if (!PyArg_ParseTuple(args, "OO", &initial_H_py_ptr, &norm_matrix_py_ptr)) {
         printf("An Error has Occurred in C at symnmf_c_wrapper func err 1\n");
         exit(EXIT_FAILURE);
@@ -151,8 +170,12 @@ static PyObject* symnmf_c_wrapper(PyObject *self, PyObject *args) {
     norm_wrapper = py_matrix_to_c_matrix(norm_matrix_py_ptr);
     initial_H_wrapper = py_matrix_to_c_matrix(initial_H_py_ptr);
     symnmf_matrix = converge_H(initial_H_wrapper->matrix, norm_wrapper->matrix, initial_H_wrapper->rows, initial_H_wrapper->cols);
-
-    return c_matrix_to_py_matrix(symnmf_matrix, initial_H_wrapper->rows, initial_H_wrapper->cols);
+    symnmf_matrix_py_ptr = c_matrix_to_py_matrix(symnmf_matrix, initial_H_wrapper->rows, initial_H_wrapper->cols);
+    free_matrix(initial_H_wrapper->matrix, initial_H_wrapper->rows);
+    free_matrix(norm_wrapper->matrix, norm_wrapper->rows);
+    free(initial_H_wrapper);
+    free(norm_wrapper);
+    return symnmf_matrix_py_ptr;;
 }
 
 static PyMethodDef SymNMFModules[] = {
