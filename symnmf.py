@@ -5,6 +5,13 @@ import math
 from typing import List, Union
 import symnmf
 
+
+def pretty_print(matrix):
+    for i in range(len(matrix)):
+        print(",".join(map(lambda x:  f'{x:.4f}', matrix[i])))
+
+
+
 def euclidean_distance(point, other) -> float:
     """
 
@@ -31,7 +38,7 @@ def initialize_H(norm_matrix, K):
         val = np.random.uniform(0, 2 * math.sqrt(m / K))
         H.append(val)
     H = np.reshape(H, (dimension, K))
-    return H
+    return H.tolist()
     
 
 
@@ -72,33 +79,40 @@ def main():
         filepath = os.path.join(os.path.join(os.getcwd()), file_name)
 
     except ValueError:
-        print("An Error Has Occurred")
+        print("An Error Has Occurred py1")
     
 
     points = read_file(filepath)
 
     if K <= 1 or K >= len(points):
-        print("An Error Has Occurred")
+        print("An Error Has Occurred py2")
         return
 
     goals_mapping = {"symnmf": 0, "sym": 1, "ddg": 2, "norm": 3}
 
     if goal not in goals_mapping:
-        print("An Error Has Occurred")
+        print("An Error Has Occurred py3")
         return
 
     if goals_mapping[goal] == 0:
         norm_matrix = symnmf.norm(points)
+        print(f"Norm matrix: {pretty_print(norm_matrix)}")
+        print(f"Norm rows: {len(norm_matrix)}, Norm columns: {len(norm_matrix[0])}")
         H = initialize_H(norm_matrix, K)
-        print(symnmf.symnmf(H, norm_matrix))
+        print(f"Initial H: ")
+        pretty_print(H)
+        res = symnmf.symnmf(H, norm_matrix)
+        print("Final H: ")
+        pretty_print(res)
     elif goals_mapping[goal] == 1:
-        print(symnmf.sym(points))
+        pretty_print(symnmf.sym(points))
     elif goals_mapping[goal] == 2:
-        print(symnmf.diag(points))
+        pretty_print(symnmf.diag(points))
     elif goals_mapping[goal] == 3:
-        print(symnmf.norm(points))
+        pretty_print(symnmf.norm(points))
 
 
 
 if __name__ == "__main__":
     main()
+
