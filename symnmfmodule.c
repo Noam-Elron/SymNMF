@@ -27,15 +27,15 @@ c_matrix_wrapper *py_matrix_to_c_matrix(PyObject *matrix_py_ptr) {
     for (i = 0; i < wrapper->rows; i++) {
         temp_row_py_ptr = PyList_GetItem(matrix_py_ptr, i);
         if (!PyList_Check(temp_row_py_ptr)) {
-            printf("An Error has Occurred\n");
+            printf("An Error has Occurred in C at py_matrix_to_c_matrix func err 1\n");
             exit(EXIT_FAILURE);
         }
-        wrapper->cols = PyList_Size(matrix_py_ptr);
+        wrapper->cols = PyList_Size(temp_row_py_ptr);
         wrapper->matrix[i] = (double*)calloc(wrapper->cols, sizeof(double));
         for (j = 0; j < wrapper->cols; j++) {
             coord_py_ptr = PyList_GetItem(temp_row_py_ptr, j);
             if (Py_IS_TYPE(coord_py_ptr, &PyFloat_Type) == 0) {
-                printf("An Error has Occurred\n");
+                printf("An Error has Occurred in C at py_matrix_to_c_matrix func err 2\n");
                 exit(EXIT_FAILURE);
             }
             wrapper->matrix[i][j] = PyFloat_AsDouble(coord_py_ptr);
@@ -71,12 +71,12 @@ static PyObject* sym_c_wrapper(PyObject *self, PyObject *args) {
     double **sim_matrix;
     
     if (!PyArg_ParseTuple(args, "O", &datapoints_matrix_py_ptr)) {
-        printf("An Error has Occurred\n");
+        printf("An Error has Occurred in C at sym_c_wrapper func err 1\n");
         exit(EXIT_FAILURE);
     }
 
     if (!PyList_Check(datapoints_matrix_py_ptr)) {
-        printf("An Error has Occurred\n");
+        printf("An Error has Occurred in C at sym_c_wrapper func err 2\n");
         exit(EXIT_FAILURE);
     }
     datapoints_wrapper = py_matrix_to_c_matrix(datapoints_matrix_py_ptr);
@@ -91,12 +91,12 @@ static PyObject* diag_c_wrapper(PyObject *self, PyObject *args) {
     double **diag_matrix;
 
     if (!PyArg_ParseTuple(args, "O", &datapoints_matrix_py_ptr)) {
-        printf("An Error has Occurred\n");
+        printf("An Error has Occurred in C at diag_c_wrapper func err 1\n");
         exit(EXIT_FAILURE);
     }
 
     if (!PyList_Check(datapoints_matrix_py_ptr)) {
-        printf("An Error has Occurred\n");
+        printf("An Error has Occurred in C at diag_c_wrapper func err 2\n");
         exit(EXIT_FAILURE);
     }
 
@@ -114,12 +114,12 @@ static PyObject* norm_c_wrapper(PyObject *self, PyObject *args) {
     double **nm_matrix;
 
     if (!PyArg_ParseTuple(args, "O", &datapoints_matrix_py_ptr)) {
-        printf("An Error has Occurred\n");
+        printf("An Error has Occurred in C at norm_c_wrapper func err 1\n");
         exit(EXIT_FAILURE);
     }
 
     if (!PyList_Check(datapoints_matrix_py_ptr)) {
-        printf("An Error has Occurred\n");
+        printf("An Error has Occurred in C at norm_c_wrapper func err 2\n");
         exit(EXIT_FAILURE);
     }
 
@@ -139,19 +139,20 @@ static PyObject* symnmf_c_wrapper(PyObject *self, PyObject *args) {
     PyObject *norm_matrix_py_ptr;
     
 
-    if (!PyArg_ParseTuple(args, "OO", &initial_H_py_ptr, norm_matrix_py_ptr)) {
-        printf("An Error has Occurred\n");
+    if (!PyArg_ParseTuple(args, "OO", &initial_H_py_ptr, &norm_matrix_py_ptr)) {
+        printf("An Error has Occurred in C at symnmf_c_wrapper func err 1\n");
         exit(EXIT_FAILURE);
     }
 
     if (!PyList_Check(initial_H_py_ptr) || !PyList_Check(norm_matrix_py_ptr)) {
-        printf("An Error has Occurred\n");
+        printf("An Error has Occurred in C at symnmf_c_wrapper func err 2\n");
         exit(EXIT_FAILURE);
     }
-    initial_H_wrapper = py_matrix_to_c_matrix(initial_H_py_ptr);
     norm_wrapper = py_matrix_to_c_matrix(norm_matrix_py_ptr);
-    symnmf_matrix = 
-    return 
+    initial_H_wrapper = py_matrix_to_c_matrix(initial_H_py_ptr);
+    symnmf_matrix = converge_H(initial_H_wrapper->matrix, norm_wrapper->matrix, initial_H_wrapper->rows, initial_H_wrapper->cols);
+
+    return c_matrix_to_py_matrix(symnmf_matrix, initial_H_wrapper->rows, initial_H_wrapper->cols);
 }
 
 static PyMethodDef SymNMFModules[] = {
