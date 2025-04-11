@@ -43,7 +43,7 @@ double frobenius_norm(double **matrix, int m, int n) {
 }
 
 
-double **converge_H(double **initial_H, double **W, int n, int k){
+double **converge_H(double **initial_H, double **W, int n, int k) {
     double **prev_H;
     double **cur_H;
     double **distance_matrix;
