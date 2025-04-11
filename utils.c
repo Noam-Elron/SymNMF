@@ -43,6 +43,27 @@ double **matrix_deep_copy(double **matrix_to_copy, int m, int n) {
     return copy;
 }
 
+double **matrix_scaling(double **matrix, double constant, int m, int n) {
+    /*
+    Input:
+        - double matrix[][]: Matrix we are scaling.
+        - double constant: Constant to multiply matrix entries by.
+        - int m: Number of rows in the matrix.
+        - int n: Number of columns in the matrix.
+    Returns:
+        mxn result of matrix scaling.
+    */
+    int i;
+    int j;
+    double **result_matrix = continuous_matrix_creation(m, n);
+
+    for (i = 0; i < m; i++) {
+        for (j = 0; j < n; j++) {
+            result_matrix[i][j] = matrix[i][j] * constant;
+        }
+    }
+    return result_matrix;
+}
 
 double **matrix_multiplication(double **matrix, double **other_matrix, int m, int s, int n) {
     /*
@@ -50,7 +71,7 @@ double **matrix_multiplication(double **matrix, double **other_matrix, int m, in
         - double matrix[][]: Left matrix we are multiplying by.
         - double other_matrix[][]: Right matrix we are multiplying by.
         - int m: Number of rows in left matrix.
-        - int s: Number of columns in left matrix / Number of rows in right matrix
+        - int s: Number of columns in left matrix / Number of rows in right matrix.
         - int n: Number of columns in right matrix.
     Returns:
         mxn result of multiplying the matrices.
@@ -69,6 +90,38 @@ double **matrix_multiplication(double **matrix, double **other_matrix, int m, in
         }
     }
     return result_matrix;
+}
+
+double **matrix_transpose(double **matrix, int m, int n) {
+    /*
+    Input:
+        - double matrix[][]: Matrix we calculate transpose for.
+        - int m: Number of rows in the matrix.
+        - int n: Number of columns in the matrix.
+    Returns:
+        mxn result of transpose on the matrix.
+    */
+    int i;
+    int j;
+    double **result_matrix;
+    result_matrix = continuous_matrix_creation(n, m);
+
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < m; j++) {
+            result_matrix[i][j] = matrix[j][i];
+        }
+    }
+    return result_matrix;
+}
+
+double matrix_trace(double **matrix, int n) {
+    int i;
+    double trace = 0;
+
+    for (i = 0; i < n; i++) {
+        trace += matrix[i][i];
+    }
+    return trace;
 }
 
 void free_matrix(double **matrix, int num_rows) {
@@ -98,8 +151,6 @@ void free_continuous_matrix(double **continuous_matrix) {
     free(continuous_matrix);     // Free the array of row pointers
 }
 
-
-
 void print_matrix(double **matrix, int m, int n) {
     /* 
     Input:
@@ -110,9 +161,25 @@ void print_matrix(double **matrix, int m, int n) {
     int i, j;
     for (i = 0; i < m; i++) {
         for (j = 0; j < n; j++) {
-            printf("%f ", matrix[i][j]);  // Print each element as an integer (no decimal)
+            printf("%.4f ", matrix[i][j]);  // Print each element as an integer (no decimal)
         }
         printf("\n");
     }
     printf("\n");
 }
+
+double **matrix_subtraction(double **matrix, double **other_matrix, int m, int n) {
+    double **subtracted_matrix;
+    int i;
+    int j;
+    
+    subtracted_matrix = continuous_matrix_creation(m, n);
+    for (i = 0; i < m; i++) {
+        for (j = 0; j < n; j++) {
+            subtracted_matrix[i][j] = matrix[i][j] - other_matrix[i][j];
+        }
+    }
+    return subtracted_matrix;
+}
+
+
