@@ -130,9 +130,10 @@ void free_matrix(double **matrix, int num_rows) {
         - double matrix[][]: Matrix whose memory we are freeing
         - int num_rows: Number of rows in the matrix
     */
+    int i;
     if (matrix == NULL) return;  /* Safety check */
 
-    for (int i = 0; i < num_rows; i++) {
+    for (i = 0; i < num_rows; i++) {
         free(matrix[i]);  /* Free each row */
     }
     free(matrix);  /* Free the row pointer array */
@@ -147,8 +148,8 @@ void free_continuous_matrix(double **continuous_matrix) {
         - int num_rows: Number of rows in the matrix
     */
     if (continuous_matrix == NULL) return;
-    free(continuous_matrix[0]);  // Free the flattened array
-    free(continuous_matrix);     // Free the array of row pointers
+    free(continuous_matrix[0]);  /* Free the flattened array */
+    free(continuous_matrix);     /* Free the array of row pointers */
 }
 
 void print_matrix(double **matrix, int m, int n) {
@@ -161,11 +162,13 @@ void print_matrix(double **matrix, int m, int n) {
     int i, j;
     for (i = 0; i < m; i++) {
         for (j = 0; j < n; j++) {
-            printf("%.4f ", matrix[i][j]);  // Print each element as an integer (no decimal)
+            printf("%.4f", matrix[i][j]);  /* Print each element as an integer (no decimal) */
+            if (j < n-1) {
+                putchar(',');
+            }
         }
         printf("\n");
     }
-    printf("\n");
 }
 
 double **matrix_subtraction(double **matrix, double **other_matrix, int m, int n) {
