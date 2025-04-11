@@ -70,6 +70,21 @@ def read_file(filepath):
             points.append(point)
     return points
 
+def sym(points):
+    return symnmf.sym(points)
+
+def diag(points):
+    return symnmf.diag(points)
+
+def norm(points):
+    return symnmf.norm(points)
+
+def nmf(K, points):
+    norm_matrix = norm(points)
+    H = initialize_H(norm_matrix, K)
+    return symnmf.symnmf(H, norm_matrix)
+
+
 def main():
     args: argparse.Namespace = parse()
     K, goal, file_name = args.K, args.goal, args.file_name
@@ -95,21 +110,13 @@ def main():
         return
 
     if goals_mapping[goal] == 0:
-        norm_matrix = symnmf.norm(points)
-        print(f"Norm matrix: {pretty_print(norm_matrix)}")
-        print(f"Norm rows: {len(norm_matrix)}, Norm columns: {len(norm_matrix[0])}")
-        H = initialize_H(norm_matrix, K)
-        print(f"Initial H: ")
-        pretty_print(H)
-        res = symnmf.symnmf(H, norm_matrix)
-        print("Final H: ")
-        pretty_print(res)
+        pretty_print(nmf(K, points))
     elif goals_mapping[goal] == 1:
-        pretty_print(symnmf.sym(points))
+        pretty_print(sym(points))
     elif goals_mapping[goal] == 2:
-        pretty_print(symnmf.diag(points))
+        pretty_print(diag(points))
     elif goals_mapping[goal] == 3:
-        pretty_print(symnmf.norm(points))
+        pretty_print(norm(points))
 
 
 

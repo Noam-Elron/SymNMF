@@ -9,3 +9,5 @@ build/temp.linux-x86_64-3.10/diagonal.o
 tests/
 __pycache__/symnmf.cpython-310.pyc
 test
+__pycache__/analysis.cpython-310.pyc
+__pycache__/kmeans_hw1.cpython-310.pyc

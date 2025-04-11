@@ -4,7 +4,7 @@ from typing import List
 import math
 import argparse
 
-epsilon = 0.001
+epsilon = 0.0001
 
 class Point:
     def __init__(self, point=None):
@@ -93,6 +93,12 @@ class ClusterManager:
 
     def __iter__(self):
         return iter(self.clusters)
+    
+    def clusters_to_list(self):
+        clusters = []
+        for cluster in self:
+            clusters.append(cluster.centroid.vals)
+        return clusters
 
 
 def kmeans(K, iter, input_data):
@@ -134,7 +140,7 @@ def kmeans(K, iter, input_data):
         if converge:
             break
     
-    return manager.clusters
+    return manager.clusters_to_list()
 
 def parse() -> argparse.Namespace:
     parser = argparse.ArgumentParser()

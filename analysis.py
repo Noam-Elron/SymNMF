@@ -3,7 +3,7 @@ import os
 import numpy as np
 import math
 from typing import List, Union
-import symnmf
+import symnmf as symnmf_py
 from kmeans_hw1 import kmeans
 import sklearn
 
@@ -35,26 +35,34 @@ def read_file(filepath):
             points.append(point)
     return points
 
+
+def kmeans_silhouette_score(K, datapoints, filepath):
+    kmeans_clusters = kmeans(K, 300, filepath)
+    kmeans_pairwise_distances = sklearn.metrics.pairwise_distances(datapoints, kmeans_clusters)
+    labels = np.argmin(kmeans_pairwise_distances, axis=1)
+    silhouette_score = sklearn.metrics.silhouette_score(datapoints, labels)
+    return silhouette_score
+    
+
+def symnmf_silhouette_score(K, datapoints):
+    H = symnmf_py.nmf(K, datapoints)
+    labels = np.argmax(H, axis=1)
+    silhouette_score = sklearn.metrics.silhouette_score(datapoints, labels)
+    return silhouette_score
+
+
 def main():
     args: argparse.Namespace = parse()
     K, file_name = args.K, args.file_name
-    
-    try:
-        K = int(K)
-        filepath = os.path.join(os.path.join(os.getcwd()), file_name)
-
-    except ValueError:
-        print("An Error Has Occurred py1")
-    
+    K = int(K)
+    filepath = os.path.join(os.path.join(os.getcwd()), file_name)
 
     points = read_file(filepath)
-
-    if K <= 1 or K >= len(points):
-        print("An Error Has Occurred py2")
-        return
+    kmeans_score = kmeans_silhouette_score(K, points, filepath)
+    nmf_score = symnmf_silhouette_score(K, points)
+    print(f"nmf: {nmf_score:.4f}")
+    print(f"kmeans: {kmeans_score:.4f}")
     
-    kmeans_clusters = kmeans(K, 600, filepath)
-    kmeans_pairwise_distances = sklearn.metrics.pairwise_distances(points, kmeans_clusters)
-    
-    kmeans_silloute_score = sklearn.metrics.silhouette_score()
 
+if __name__ == "__main__":
+    main()
