@@ -27,10 +27,10 @@ def initialize_H(norm_matrix, K):
     dimension = len(norm_matrix)
     H = []
 
-    for i in range(dimension*dimension):
+    for i in range(dimension*K):
         val = np.random.uniform(0, 2 * math.sqrt(m / K))
         H.append(val)
-    H = np.reshape(H, (dimension, dimension))
+    H = np.reshape(H, (dimension, K))
     return H
     
 
