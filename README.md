@@ -1,11 +1,6 @@
 #TODO:
-1. H aka SymNMF Calculation in C
-2. Clustering using H
-3. Analysis of KMeans vs Symnmf.
-4. Makefile
-
-5. AT THE END REMOVE WEIRD ERROR DEBUG STATEMENTS IN C AND PYTHON THANK YOU
-
+1. Analysis of KMeans vs Symnmf.
+2. Add more function documentation.
 
 Useful Commands:
 1. Valgrind Python Memory Leak Checking: valgrind python3 --suppressions=/usr/lib/valgrind/python3.supp symnmf.py 2 symnmf ./tests/simple_test2.txt

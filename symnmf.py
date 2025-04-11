@@ -94,19 +94,19 @@ def main():
         filepath = os.path.join(os.path.join(os.getcwd()), file_name)
 
     except ValueError:
-        print("An Error Has Occurred py1")
+        print("An Error Has Occurred")
     
 
     points = read_file(filepath)
 
     if K <= 1 or K >= len(points):
-        print("An Error Has Occurred py2")
+        print("An Error Has Occurred")
         return
 
     goals_mapping = {"symnmf": 0, "sym": 1, "ddg": 2, "norm": 3}
 
     if goal not in goals_mapping:
-        print("An Error Has Occurred py3")
+        print("An Error Has Occurred")
         return
 
     if goals_mapping[goal] == 0:
