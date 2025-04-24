@@ -1,6 +1,5 @@
 #TODO:
 1. Analysis of KMeans vs Symnmf.
-2. Add more function documentation.
 
 Useful Commands:
 1. Valgrind Python Memory Leak Checking: valgrind python3 --suppressions=/usr/lib/valgrind/python3.supp symnmf.py 2 symnmf ./tests/simple_test2.txt
