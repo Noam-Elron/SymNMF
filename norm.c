@@ -4,7 +4,7 @@
 #include "diagonal.h"
 
 double **diagonal_matrix_multiplication(double **matrix, double **diagonal_matrix, int num_points, int multiplication_direction) {
-    /*
+    /* Helper function for norm to calculate result of multiplying matrix by a diagonal matrix, supports both left and right multiplication. Does not modify data passed in.
     Input:
         - double matrix[][]: Square matrix we are multiplying diagonal matrix by.
         - double diagonal_matrix[][]: Square diagonal matrix.
@@ -27,7 +27,7 @@ double **diagonal_matrix_multiplication(double **matrix, double **diagonal_matri
 
 
 double **diagonal_matrix_exponentiation(double **diagonal_matrix, double exponent, int matrix_dimension) {
-    /*
+    /* Helper function for norm to calculate result of calculating exponent of diagonal matrix. Does not modify data passed in.
     Input: 
         - double diagonal matrix[][] D: Square matrix where each entry other than diagonal is zero, diagonal is free to be any value.
         - double exponent: Power we are raising diagonal matrix D by.
@@ -43,7 +43,7 @@ double **diagonal_matrix_exponentiation(double **diagonal_matrix, double exponen
 }
 
 double **norm_matrix(double **similarity_matrix, double **diagonal_matrix, int num_points) {
-    /* 
+    /* Creates norm matrix as per project instructions
     Input: 
         - double Similarity Matrix[][]: Matrix where each entry corresponds to similarity between points as described in PDF.
         - double Diagonal Matrix[][]: Matrix where each entry other than diagonal is zero, i'th diagonal entry is sum of the i'th row in the similarity matrix.

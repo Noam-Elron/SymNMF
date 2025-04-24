@@ -18,7 +18,7 @@ double matrix_row_sum(double row[], int num_points) {
 }
 
 double **diagonal_matrix(double **similarity_matrix, int num_points) {
-    /* 
+    /* Creates diagonal matrix as per project instructions
     Input: 
         - double Similarity Matrix[][]: Matrix where each entry corresponds to similarity between points as described in PDF.
         - int num_points: Number of points in Datapoints, this is also the size of the diagonal matrix as the matrix has a diagonal 

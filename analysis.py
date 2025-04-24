@@ -1,7 +1,6 @@
 import argparse
 import os
 import numpy as np
-import math
 from typing import List, Union
 import symnmf as symnmf_py
 from kmeans_hw1 import kmeans
@@ -9,15 +8,10 @@ import sklearn
 
 
 def parse() -> argparse.Namespace:
-    """
+    """Parsing Function for user input
 
-    Parameters
-    ----------
-    distances_list : _type_
-        _description_
-    total_distances : _type_
-        _description_
-        
+    Returns:
+        argparse.Namespace: Parsing object to pass user input to main program
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('K', type=str)
@@ -25,8 +19,16 @@ def parse() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def read_file(filepath):
-    points = []
+def read_file(filepath: str) -> List[List[float]]:
+    """Function to read datapoints from file
+
+    Args:
+        filepath (str): filepath to .txt file containing valid datapoints
+
+    Returns:
+        List[List[float]: 2D Array, each element is a datapoint which is itself an array of floats
+    """
+    points: List[List[float]] = []
     with open(filepath, "r", encoding="utf-8") as file:
         for line in file:
             line = line.strip()
@@ -36,7 +38,17 @@ def read_file(filepath):
     return points
 
 
-def kmeans_silhouette_score(K, datapoints, filepath):
+def kmeans_silhouette_score(K: int, datapoints: List[List[float]], filepath: str) -> float:
+    """Calculates KMeans (implementation from original HW1) silhouette score
+
+    Args:
+        K (int): Number of clusters
+        datapoints (List[List[float]]): 2D array of datapoints 
+        filepath (str): filepath to .txt file containing datapoints 
+
+    Returns:
+        float: KMeans silhouette score
+    """
     kmeans_clusters = kmeans(K, 300, filepath)
     kmeans_pairwise_distances = sklearn.metrics.pairwise_distances(datapoints, kmeans_clusters)
     labels = np.argmin(kmeans_pairwise_distances, axis=1)
@@ -45,13 +57,27 @@ def kmeans_silhouette_score(K, datapoints, filepath):
     
 
 def symnmf_silhouette_score(K, datapoints):
+    """Calculates SymNMF silhouette score
+
+    Args:
+        K (int): Number of clusters
+        datapoints (List[List[float]]): 2D array of datapoints 
+
+    Returns:
+        float: SymNMF silhouette score
+    """
     H = symnmf_py.nmf(K, datapoints)
     labels = np.argmax(H, axis=1)
+    if len(np.unique(labels)) == 1: # Exception is raised if all datapoints assigned to same cluster
+        print("An Error Has Occurred")
+        exit()
     silhouette_score = sklearn.metrics.silhouette_score(datapoints, labels)
     return silhouette_score
 
 
 def main():
+    """Main function for analysis.py, shows output of silhouette comparison
+    """
     args: argparse.Namespace = parse()
     K, file_name = args.K, args.file_name
     K = int(K)

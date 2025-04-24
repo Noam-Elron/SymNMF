@@ -15,6 +15,12 @@ typedef struct c_matrix_wrapper {
 
 
 c_matrix_wrapper *py_matrix_to_c_matrix(PyObject *matrix_py_ptr) {
+    /* Converts python matrix to c matrix
+    Input: 
+        - PyObject *matrix_py_ptr: Python matrix we want to convert to c matrix
+    Returns:
+        Wrapper for c matrix, includes matrix itself as well as matrix dimensions.
+    */
     PyObject *temp_row_py_ptr;
     PyObject *coord_py_ptr;
     Py_ssize_t i;
@@ -47,6 +53,14 @@ c_matrix_wrapper *py_matrix_to_c_matrix(PyObject *matrix_py_ptr) {
 
 
 PyObject *c_matrix_to_py_matrix(double **matrix, Py_ssize_t m, Py_ssize_t n) {
+    /* Converts c matrix to python matrix
+    Input: 
+        - double **matrix: C matrix we want to convert to Python matrix
+        - Py_ssize_t m: Number of rows in matrix
+        - Py_ssize_t n: Number of columns in matrix
+    Returns:
+        Created python matrix equivalent of given C matrix.
+    */
     PyObject *matrix_py;
     PyObject *temp_matrix_row_py;
     PyObject *matrix_entry_py;
@@ -67,6 +81,14 @@ PyObject *c_matrix_to_py_matrix(double **matrix, Py_ssize_t m, Py_ssize_t n) {
 
 
 static PyObject* sym_c_wrapper(PyObject *self, PyObject *args) {
+    /* Python-C Extension wrapper for calculating similarity matrix in C and returning it to Python program.
+    Input: 
+        - PyObject *self: reference to wrapper.
+        - PyObject *args: Python arguments calling c function. 
+        
+    Returns:
+        Python similarity matrix
+    */
     PyObject *datapoints_matrix_py_ptr;
     c_matrix_wrapper *datapoints_wrapper;
     double **sim_matrix;
@@ -91,6 +113,14 @@ static PyObject* sym_c_wrapper(PyObject *self, PyObject *args) {
 }
 
 static PyObject* diag_c_wrapper(PyObject *self, PyObject *args) {
+    /* Python-C Extension wrapper for calculating diagonal matrix in C and returning it to Python program.
+    Input: 
+        - PyObject *self: reference to wrapper.
+        - PyObject *args: Python arguments calling c function. 
+        
+    Returns:
+        Python diagonal matrix
+    */
     PyObject *datapoints_matrix_py_ptr;
     c_matrix_wrapper *datapoints_wrapper;
     double **sim_matrix;
@@ -119,6 +149,14 @@ static PyObject* diag_c_wrapper(PyObject *self, PyObject *args) {
 }
 
 static PyObject* norm_c_wrapper(PyObject *self, PyObject *args) {
+    /* Python-C Extension wrapper for calculating norm matrix in C and returning it to Python program.
+    Input: 
+        - PyObject *self: reference to wrapper.
+        - PyObject *args: Python arguments calling c function. 
+        
+    Returns:
+        Python norm matrix
+    */
     PyObject *datapoints_matrix_py_ptr;
     c_matrix_wrapper *datapoints_wrapper;
     double **sim_matrix;
@@ -151,6 +189,14 @@ static PyObject* norm_c_wrapper(PyObject *self, PyObject *args) {
 
 
 static PyObject* symnmf_c_wrapper(PyObject *self, PyObject *args) {
+    /* Python-C Extension wrapper for calculating SymNMF matrix in C and returning it to Python program.
+    Input: 
+        - PyObject *self: reference to wrapper.
+        - PyObject *args: Python arguments calling c function. 
+        
+    Returns:
+        Python symnmf matrix
+    */
     double **symnmf_matrix;
     c_matrix_wrapper *initial_H_wrapper;
     c_matrix_wrapper *norm_wrapper;
@@ -178,7 +224,7 @@ static PyObject* symnmf_c_wrapper(PyObject *self, PyObject *args) {
     return symnmf_matrix_py_ptr;;
 }
 
-static PyMethodDef SymNMFModules[] = {
+static PyMethodDef SymNMFMethods[] = {
     {
         "sym", 
         (PyCFunction) sym_c_wrapper,
@@ -209,13 +255,15 @@ static PyMethodDef SymNMFModules[] = {
   
 static struct PyModuleDef SymNMFModule = {
     PyModuleDef_HEAD_INIT,
-    "symnmf",
+    "symnmf_c",
     "Python interface for the SymNMF C module",
     -1,
-    SymNMFModules
+    SymNMFMethods
   };
   
-PyMODINIT_FUNC PyInit_symnmf(void) {
+PyMODINIT_FUNC PyInit_symnmf_c(void) {
+    /* Python-C interface module creation, created as shown in class.
+    */
       PyObject *module;
       module = PyModule_Create(&SymNMFModule);
       if (!module) {

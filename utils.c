@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 double **continuous_matrix_creation(int m, int n) {
-    /* 
+    /* Creates a continuous matrix via method shown in class 
     Input:
         - int m: Number of rows in matrix
         - int n: Number of columns in matrix
@@ -23,7 +23,7 @@ double **continuous_matrix_creation(int m, int n) {
 }
 
 double **matrix_deep_copy(double **matrix_to_copy, int m, int n) {
-    /* 
+    /* Deep copies a 2D matrix in order to preserve immutability
     Input:
         - double matrix_to_copy[][]: Matrix whose values we're copying, by copying just values instead of pointers we are essentially deep-copying it.
         - int m: Number of rows in matrix we're copying
@@ -44,7 +44,7 @@ double **matrix_deep_copy(double **matrix_to_copy, int m, int n) {
 }
 
 double **matrix_scaling(double **matrix, double constant, int m, int n) {
-    /*
+    /* Creates new matrix by multiplying (coordinate wise) given matrix by a scalar
     Input:
         - double matrix[][]: Matrix we are scaling.
         - double constant: Constant to multiply matrix entries by.
@@ -66,7 +66,7 @@ double **matrix_scaling(double **matrix, double constant, int m, int n) {
 }
 
 double **matrix_multiplication(double **matrix, double **other_matrix, int m, int s, int n) {
-    /*
+    /* Multiplies two matrices together.
     Input:
         - double matrix[][]: Left matrix we are multiplying by.
         - double other_matrix[][]: Right matrix we are multiplying by.
@@ -93,7 +93,7 @@ double **matrix_multiplication(double **matrix, double **other_matrix, int m, in
 }
 
 double **matrix_transpose(double **matrix, int m, int n) {
-    /*
+    /* Transposes given matrix (immutable operation, returns new matrix and doesn't modify old one)
     Input:
         - double matrix[][]: Matrix we calculate transpose for.
         - int m: Number of rows in the matrix.
@@ -115,6 +115,13 @@ double **matrix_transpose(double **matrix, int m, int n) {
 }
 
 double matrix_trace(double **matrix, int n) {
+    /* Calculates trace of square matrix
+    Input:
+        - double matrix[][]: Matrix we calculate trace for.
+        - int n: Size of matrix.
+    Returns:
+        Trace of given matrix.
+    */
     int i;
     double trace = 0;
 
@@ -153,7 +160,7 @@ void free_continuous_matrix(double **continuous_matrix) {
 }
 
 void print_matrix(double **matrix, int m, int n) {
-    /* 
+    /* Prints matrix as per project specifications.
     Input:
         - double **matrix: The matrix to be printed
         - int m: Number of rows
@@ -172,6 +179,15 @@ void print_matrix(double **matrix, int m, int n) {
 }
 
 double **matrix_subtraction(double **matrix, double **other_matrix, int m, int n) {
+    /* Subtracts one matrix from another (coordinate wise) (immutable operation, returns new matrix and doesn't modify old ones)
+    Input:
+        - double matrix[][]: Matrix we are subtracting form.
+        - double other_matrix[][]: Matrix we are using to subtract.
+        - int m: Number of rows in both matrices.
+        - int n: Number of columns in both matrices.
+    Returns:
+        mxn result of subtracting other_matrix from matrix
+    */
     double **subtracted_matrix;
     int i;
     int j;

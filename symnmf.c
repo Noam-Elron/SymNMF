@@ -12,6 +12,15 @@
 
 
 double **update_H(double **prev_H, double **W, int n, int k) {
+    /* Updates H to next iteration as per project instructions
+    Input: 
+        - double prev_H[][]: Previous iteration of H we are trying to update.
+        - double W[][]: Norm matrix we are using to calculate next iteration of H.
+        - int n: Size of norm matrix, number of rows in H.
+        - int k: Number of columns in H.
+    Returns:
+        Next iteration of H
+    */
     double **w_h_mult;
     double **h_t;
     double **h_h_t_mult;
@@ -39,6 +48,14 @@ double **update_H(double **prev_H, double **W, int n, int k) {
 }   
 
 double frobenius_norm(double **matrix, int n, int k) {
+    /* Calculates frobenius norm of matrix.
+    Input: 
+        - double matrix[][]: Matrix we are trying to calculate frobenius norm of.
+        - int n: Number of rows in matrix.
+        - int k: Number of columns in matrix.
+    Returns:
+        Frobenius norm of given matrix
+    */
     double **transpose;
     double **m_t_mult;
     double trace;
@@ -50,6 +67,15 @@ double frobenius_norm(double **matrix, int n, int k) {
 
 
 double **converge_H(double **initial_H, double **W, int n, int k) {
+    /* Continuously updates H until either convergence or until reaching max iterations, as per project instructions
+    Input: 
+        - double Initial_H[][]: Initial H matrix we received from Python.
+        - double W[][]: Norm matrix.
+        - int n: Size of norm matrix, number of rows in H.
+        - int k: Number of columns in H.
+    Returns:
+        Final iteration of H.
+    */
     double **prev_H;
     double **cur_H;
     double **distance_matrix;
@@ -84,6 +110,12 @@ typedef struct datapoints_wrapper {
 
 
 datapoints_wrapper* initialize_data(const char *filename) {
+    /* Initializes a datapoints wrapper in order to read datapoints from file
+    Input: 
+        - char[] filename: string filepath to .txt file containing datapoints
+    Returns:
+        Initialized datapoint wrapper.
+    */
     FILE *file = fopen(filename, "r");
     int rows = 0;
     char line[1023];
@@ -105,6 +137,11 @@ datapoints_wrapper* initialize_data(const char *filename) {
 }
 
 void populate_data(datapoints_wrapper *wrapper, const char *filename) {
+    /* Reads datapoints from file into initialized datapoints wrapper
+    Input: 
+        - datapoints_wrapper *wrapper: initialized datapoints wrapper.
+        - char[] filename: string filepath to .txt file containing datapoints
+    */
     FILE *file = fopen(filename, "r");
     char *token;
     char line[1023];
@@ -131,6 +168,10 @@ void populate_data(datapoints_wrapper *wrapper, const char *filename) {
 
 
 void sym(datapoints_wrapper *datapoints) {
+    /* Wrapper function to calculate similarity matrix as per project instructions
+    Input: 
+        - datapoints_wrapper *datapoints: datapoints wrapper.
+    */
     double **sym_matrix;
     int n = datapoints->dimension;
     sym_matrix = similarity_matrix(datapoints->datapoints, n, n);
@@ -139,6 +180,10 @@ void sym(datapoints_wrapper *datapoints) {
 }
 
 void ddg(datapoints_wrapper *datapoints) {
+    /* Wrapper function to calculate diagonal matrix as per project instructions
+    Input: 
+        - datapoints_wrapper *datapoints: datapoints wrapper.
+    */
     double **sym_matrix;
     double **diag_matrix;
     int n = datapoints->dimension;
@@ -150,6 +195,10 @@ void ddg(datapoints_wrapper *datapoints) {
 }
 
 void norm(datapoints_wrapper *datapoints) {
+    /* Wrapper function to calculate norm matrix as per project instructions
+    Input: 
+        - datapoints_wrapper *datapoints: datapoints wrapper.
+    */
     double **sym_matrix;
     double **diag_matrix;
     double **normal_matrix;
@@ -165,6 +214,11 @@ void norm(datapoints_wrapper *datapoints) {
 
 
 int main(int argc, char **argv) {
+    /* Main function for SymNMF in C, handles user input and calling appropriate wrapper functions.
+    Input:
+        - int argc: number of passed in user arguments (must be exactly 3 in order for program to run)
+        - char **argv: user arguments (must be in the form (c_filename, goal, filepath))
+    */
     datapoints_wrapper *datapoints;
     
     char *goals[] = {"sym", "ddg", "norm"};

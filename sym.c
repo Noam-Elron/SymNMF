@@ -2,7 +2,7 @@
 #include "utils.h"
 
 double euclidean_distance_squared(double point[], double other_point[], int point_dimension) {
-    /*
+    /* Calculates squared euclidean distance between two datapoints
     Input:
         - double point[]: First point we are comparing euclidean distance with.
         - double other_point[]: Second point we are comparing euclidean distance with.
@@ -19,9 +19,8 @@ double euclidean_distance_squared(double point[], double other_point[], int poin
 }
 
 
-/* Note: When freeing memory here, due to structure not all memory may be freed properly, valgrind may scream :), if normal freeing doesnt work check online*/
 double **similarity_matrix(double **datapoints, int num_points, int point_dimension) {
-    /* 
+    /* Creates similarity matrix as per project instructions
     Input: 
         - double Datapoints[][]: 2D Array, each element in it is a point who is itself an array of coordinates.datapoints
         - int num_points: Number of points in Datapoints, this is also the size of the similarity matrix as each entry in it corresponds to a point

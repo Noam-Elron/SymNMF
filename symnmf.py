@@ -3,32 +3,45 @@ import os
 import numpy as np
 import math
 from typing import List, Union
-import symnmf
+import symnmf_c
 
 
-def pretty_print(matrix):
+def pretty_print(matrix: List[List[float]]):
+    """Function to print matrices as per project specifications 
+
+    Args:
+        matrix (List[List[float]]): Matrix we want to print.
+    """
     for i in range(len(matrix)):
         print(",".join(map(lambda x:  f'{x:.4f}', matrix[i])))
 
 
 
-def euclidean_distance(point, other) -> float:
-    """
+def euclidean_distance(point: List[float], other: List[float]) -> float:
+    """Calculates euclidean distance of two points
 
-    Parameters
-    ----------
-    distances_list : _type_
-        _description_
-    total_distances : _type_
-        _description_
-        
+    Args:
+        point (List[List[float]]): Point 1 we are trying to calculate euclidean distance to other point
+        other (List[List[float]]): Point 2 we are trying to calculate euclidean distance to point
+
+    Returns:
+        float: euclidean distance of the two points
     """
     total = 0
     for i in range(len(point)):
         total += pow((point[i] - other[i]), 2)
     return math.sqrt(total)
 
-def initialize_H(norm_matrix, K):
+def initialize_H(norm_matrix: List[List[float]], K: int) -> List[List[float]]:
+    """Creates initial H matrix as per project specifications, uses np random seed 1234.
+
+    Args:
+        norm_matrix (List[List[float]]): Previously calculated norm matrix
+        K (int): Number of clusters.
+
+    Returns:
+        List[List[float]]: Resultant initialized H matrix
+    """
     np.random.seed(1234)
     m = np.mean(norm_matrix)
     dimension = len(norm_matrix)
@@ -43,15 +56,9 @@ def initialize_H(norm_matrix, K):
 
 
 def parse() -> argparse.Namespace:
-    """
-
-    Parameters
-    ----------
-    distances_list : _type_
-        _description_
-    total_distances : _type_
-        _description_
-        
+    """Parsing Function for user input
+    Returns:
+        argparse.Namespace: Parsing object to pass user input to main program
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('K', type=str)
@@ -60,7 +67,13 @@ def parse() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def read_file(filepath):
+def read_file(filepath: str) -> List[List[float]]:
+    """Function to read datapoints from file
+    Args:
+        filepath (str): filepath to .txt file containing valid datapoints
+    Returns:
+        List[List[float]]: 2D Array, each element is a datapoint which is itself an array of floats.
+    """
     points = []
     with open(filepath, "r", encoding="utf-8") as file:
         for line in file:
@@ -70,22 +83,50 @@ def read_file(filepath):
             points.append(point)
     return points
 
-def sym(points):
-    return symnmf.sym(points)
+def sym(points: List[List[float]]) -> List[List[float]]:
+    """Python wrapper function to calculate similarity matrix by calling appropriate C module function.
+    Args:
+        points (List[List[float]]): Datapoints used to calculate similarity matrix
+    Returns:
+        List[List[float]]: Resultant similarity matrix
+    """
+    return symnmf_c.sym(points)
 
-def diag(points):
-    return symnmf.diag(points)
+def diag(points: List[List[float]]) -> List[List[float]]:
+    """Python wrapper function to calculate diagonal matrix by calling appropriate C module function.
+    Args:
+        points (List[List[float]]): Datapoints used to calculate diagonal matrix
+    Returns:
+        List[List[float]]: Resultant diagonal matrix
+    """
+    return symnmf_c.diag(points)
 
-def norm(points):
-    return symnmf.norm(points)
+def norm(points: List[List[float]]) -> List[List[float]]:
+    """Python wrapper function to calculate norm matrix by calling appropriate C module function.
+    Args:
+        points (List[List[float]]): Datapoints used to calculate norm matrix
+    Returns:
+        List[List[float]]: Resultant norm matrix
+    """
+    return symnmf_c.norm(points)
 
-def nmf(K, points):
+def nmf(K: int, points: List[List[float]]) -> List[List[float]]:
+    """Python wrapper function to calculate symnmf matrix by calling appropriate C module function.
+    Args:
+        K (int): number of clusters
+        points (List[List[float]]): Datapoints used to calculate symnmf matrix
+    Returns:
+        List[List[float]]: Resultant symnmf matrix
+    """
     norm_matrix = norm(points)
     H = initialize_H(norm_matrix, K)
-    return symnmf.symnmf(H, norm_matrix)
+    return symnmf_c.symnmf(H, norm_matrix)
 
 
 def main():
+    """Main function for SymNMF in Python, handles performing algorithm as per project specifications by calling
+    appropriate wrapper functions based on user input, handles basic input verification.
+    """
     args: argparse.Namespace = parse()
     K, goal, file_name = args.K, args.goal, args.file_name
     
@@ -95,8 +136,8 @@ def main():
 
     except ValueError:
         print("An Error Has Occurred")
+        return
     
-
     points = read_file(filepath)
 
     if K <= 1 or K >= len(points):
