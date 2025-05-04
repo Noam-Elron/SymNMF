@@ -1,7 +1,9 @@
+from multiprocessing import Value
 import os
 from typing import List
 import math
 import argparse
+import sys
 
 epsilon = 0.0001
 
@@ -33,7 +35,7 @@ class Point:
         """
         total = 0
         for i in range(len(self.vals)):
-            total += pow((self.vals[i] - other.vals[i]), 2)
+            total += (self.vals[i] - other.vals[i]) * (self.vals[i] - other.vals[i])
         return math.sqrt(total)
 
     def __add__(self, other: "Point") -> "Point":
@@ -201,15 +203,15 @@ def kmeans(K: int, iter: int, input_data: str) -> List[List[float]]:
     Returns:
         List[List[float]]: 2D array of clusters resulting from KMeans algorithm
     """
-    if iter >= 1000 or iter <= 1 or type(iter) != int:
+    if iter >= 1000 or iter <= 1:
         print("Invalid maximum iteration!")
-        return
+        exit(1)
     
     points: List[Point] = read_points(input_data)
             
-    if K <= 1 or K >= len(points) or type(K) != int:
+    if K <= 1 or K >= len(points):
         print("Invalid number of clusters!")
-        return
+        exit(1)
     
     manager = ClusterManager()
 
@@ -242,6 +244,11 @@ def parse() -> argparse.Namespace:
     parser.add_argument('K', type=str)
     parser.add_argument('iter', type=str, nargs='?', default="200")
     parser.add_argument('input_file', type=str)
+
+    if len(sys.argv) < 3 or len(sys.argv) > 4:
+        print("An Error Has Occurred")
+        exit(1)
+        
     return parser.parse_args()
 
 if __name__ == "__main__":
@@ -249,11 +256,31 @@ if __name__ == "__main__":
     K, iterations, filepath = args.K, args.iter, args.input_file
     
     try:
-        K = int(K)
-        iterations = int(iterations)
-        filepath = os.path.join(os.getcwd(), filepath)
-        kmeans(K, iterations, filepath)
+        K = float(K)
+        if K != int(K):
+            raise ValueError()
+        K = int(K) 
     except ValueError:
-        print("An Error has Occurred")
+        print("Invalid number of clusters!")
+        exit(1)
+
+    try:
+        iterations = float(iterations)
+        if iterations != int(iterations):
+            raise ValueError()
+        iterations = int(iterations)
+    except ValueError:
+        print("Invalid maximum iteration!")
+        exit(1)
+
+    try:
+        filepath = os.path.join(os.getcwd(), filepath)
+        kmeans_output = kmeans(K, iterations, filepath)
+        for cluster_output in kmeans_output:
+            formatted_floats = list(map(lambda x: f'{x:.4f}', cluster_output))
+            result = ','.join(formatted_floats)
+            print(result)
+    except ValueError:
+        print("An Error Has Occurred")
 
 
