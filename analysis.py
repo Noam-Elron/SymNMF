@@ -3,7 +3,7 @@ import os
 import numpy as np
 from typing import List, Union
 import symnmf as symnmf_py
-from kmeans_hw1 import kmeans
+from kmeans import kmeans
 import sklearn
 
 
@@ -33,7 +33,11 @@ def read_file(filepath: str) -> List[List[float]]:
         for line in file:
             line = line.strip()
             point = line.split(",")
-            point = list(map(float, point))
+            try:
+                point = list(map(float, point))
+            except ValueError:
+                print("An Error Has Occurred")
+                exit(1)
             points.append(point)
     return points
 
@@ -80,10 +84,21 @@ def main():
     """
     args: argparse.Namespace = parse()
     K, file_name = args.K, args.file_name
-    K = int(K)
+    try:
+        K = float(K)
+        if K != int(K):
+            raise ValueError()
+        K = int(K)
+    except ValueError:
+        print("An Error Has Occurred")
+        return
     filepath = os.path.join(os.path.join(os.getcwd()), file_name)
 
     points = read_file(filepath)
+    if K <= 1 or K >= len(points):
+        print("An Error Has Occurred")
+        return
+    
     kmeans_score = kmeans_silhouette_score(K, points, filepath)
     nmf_score = symnmf_silhouette_score(K, points)
     print(f"nmf: {nmf_score:.4f}")
