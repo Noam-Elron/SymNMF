@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 double **continuous_matrix_creation(int m, int n) {
-    /* Creates a continuous matrix via method shown in class 
+    /* Creates a continuous matrix via method shown in class . Returns NULL on error.
     Input:
         - int m: Number of rows in matrix
         - int n: Number of columns in matrix
@@ -15,6 +15,12 @@ double **continuous_matrix_creation(int m, int n) {
 
     flattened_matrix = calloc(m * n, sizeof(double));
     matrix = calloc(m, sizeof(double *));
+    if (flattened_matrix == NULL || matrix == NULL){
+        free(flattened_matrix);
+        free(matrix);
+        return NULL;
+    }
+
     for (i = 0; i < m; i++) {
         matrix[i] = flattened_matrix + i * n;
     }
@@ -23,7 +29,7 @@ double **continuous_matrix_creation(int m, int n) {
 }
 
 double **matrix_deep_copy(double **matrix_to_copy, int m, int n) {
-    /* Deep copies a 2D matrix in order to preserve immutability
+    /* Deep copies a 2D matrix in order to preserve immutability. Returns NULL on error.
     Input:
         - double matrix_to_copy[][]: Matrix whose values we're copying, by copying just values instead of pointers we are essentially deep-copying it.
         - int m: Number of rows in matrix we're copying
@@ -31,9 +37,12 @@ double **matrix_deep_copy(double **matrix_to_copy, int m, int n) {
     Returns:
         - Deep copy of given matrix
     */
+    int i, j;
     double **copy = continuous_matrix_creation(m, n);
-    int i;
-    int j;
+    if (copy == NULL) {
+        return NULL;
+    }
+    
 
     for (i = 0; i < m; i++) {
         for (j = 0; j < n; j++) {
@@ -44,7 +53,7 @@ double **matrix_deep_copy(double **matrix_to_copy, int m, int n) {
 }
 
 double **matrix_scaling(double **matrix, double constant, int m, int n) {
-    /* Creates new matrix by multiplying (coordinate wise) given matrix by a scalar
+    /* Creates new matrix by multiplying (coordinate wise) given matrix by a scalar. Returns NULL on error.
     Input:
         - double matrix[][]: Matrix we are scaling.
         - double constant: Constant to multiply matrix entries by.
@@ -56,7 +65,9 @@ double **matrix_scaling(double **matrix, double constant, int m, int n) {
     int i;
     int j;
     double **result_matrix = continuous_matrix_creation(m, n);
-
+    if (result_matrix == NULL){
+        return NULL;
+    }
     for (i = 0; i < m; i++) {
         for (j = 0; j < n; j++) {
             result_matrix[i][j] = matrix[i][j] * constant;
@@ -66,7 +77,7 @@ double **matrix_scaling(double **matrix, double constant, int m, int n) {
 }
 
 double **matrix_multiplication(double **matrix, double **other_matrix, int m, int s, int n) {
-    /* Multiplies two matrices together.
+    /* Multiplies two matrices together. Returns NULL on error.
     Input:
         - double matrix[][]: Left matrix we are multiplying by.
         - double other_matrix[][]: Right matrix we are multiplying by.
@@ -81,7 +92,9 @@ double **matrix_multiplication(double **matrix, double **other_matrix, int m, in
     int k;
     double **result_matrix;
     result_matrix = continuous_matrix_creation(m, n);
-    
+    if (result_matrix == NULL) {
+        return NULL;
+    }
     for (i = 0; i < m; i++) {
         for (j = 0; j < n; j++) {
             for (k = 0; k < s; k++) {
@@ -93,18 +106,21 @@ double **matrix_multiplication(double **matrix, double **other_matrix, int m, in
 }
 
 double **matrix_transpose(double **matrix, int m, int n) {
-    /* Transposes given matrix (immutable operation, returns new matrix and doesn't modify old one)
+    /* Transposes given matrix (immutable operation, returns new matrix and doesn't modify old one). Returns NULL on error.
     Input:
         - double matrix[][]: Matrix we calculate transpose for.
         - int m: Number of rows in the matrix.
         - int n: Number of columns in the matrix.
     Returns:
-        mxn result of transpose on the matrix.
+        nxm result of transpose on the matrix.
     */
     int i;
     int j;
     double **result_matrix;
     result_matrix = continuous_matrix_creation(n, m);
+    if (result_matrix == NULL) {
+        return NULL;
+    }
 
     for (i = 0; i < n; i++) {
         for (j = 0; j < m; j++) {
@@ -179,7 +195,7 @@ void print_matrix(double **matrix, int m, int n) {
 }
 
 double **matrix_subtraction(double **matrix, double **other_matrix, int m, int n) {
-    /* Subtracts one matrix from another (coordinate wise) (immutable operation, returns new matrix and doesn't modify old ones)
+    /* Subtracts one matrix from another (coordinate wise) (immutable operation, returns new matrix and doesn't modify old ones). Returns NULL on error.
     Input:
         - double matrix[][]: Matrix we are subtracting form.
         - double other_matrix[][]: Matrix we are using to subtract.
@@ -193,6 +209,10 @@ double **matrix_subtraction(double **matrix, double **other_matrix, int m, int n
     int j;
     
     subtracted_matrix = continuous_matrix_creation(m, n);
+    if (subtracted_matrix == NULL) {
+        return NULL;
+    }
+
     for (i = 0; i < m; i++) {
         for (j = 0; j < n; j++) {
             subtracted_matrix[i][j] = matrix[i][j] - other_matrix[i][j];
