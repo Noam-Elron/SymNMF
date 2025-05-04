@@ -1,5 +1,5 @@
 #include "utils.h"
-#include "sym.h"
+#include <stdlib.h>
 
 double matrix_row_sum(double row[], int num_points) {
     /* Helper function for diagonal matrix creation, calculates the sum of the i'th row in the similarity matrix.
@@ -18,7 +18,7 @@ double matrix_row_sum(double row[], int num_points) {
 }
 
 double **diagonal_matrix(double **similarity_matrix, int num_points) {
-    /* Creates diagonal matrix as per project instructions
+    /* Creates diagonal matrix as per project instructions. Returns NULL on error.
     Input: 
         - double Similarity Matrix[][]: Matrix where each entry corresponds to similarity between points as described in PDF.
         - int num_points: Number of points in Datapoints, this is also the size of the diagonal matrix as the matrix has a diagonal 
@@ -30,6 +30,10 @@ double **diagonal_matrix(double **similarity_matrix, int num_points) {
     double **diagonal_matrix;
     
     diagonal_matrix = continuous_matrix_creation(num_points, num_points);
+    if (diagonal_matrix == NULL) {
+        return NULL;
+    }
+    
     for (i = 0; i < num_points; i++) {
         /* Calloc instantiates all elements to zero, therefore no need to set d_ij = 0 manually for i != j */
         diagonal_matrix[i][i] = matrix_row_sum(similarity_matrix[i], num_points);
