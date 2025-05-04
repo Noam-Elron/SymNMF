@@ -10,6 +10,13 @@
 #define epsilon 1e-4
 #define max_iter 300
 
+typedef struct datapoints_wrapper {
+    double **datapoints;
+    int num_points;
+    int dimension;
+} datapoints_wrapper;
+
+
 void free_update_H_matrices(double **w_h_mult, double **h_t, double **h_h_t_mult, double **h_h_t_h_mult){
     /* Frees up H matrices for convenience. Matrices can be NULL as free_continuous_matrix which is used here handles it. 
     Input: 
@@ -24,6 +31,7 @@ void free_update_H_matrices(double **w_h_mult, double **h_t, double **h_h_t_mult
     free_continuous_matrix(h_h_t_h_mult);
     return;
 }
+
 
 double **update_H(double **prev_H, double **W, int n, int k) {
     /* Updates H to next iteration as per project instructions. Returns NULL on error.
@@ -63,7 +71,6 @@ double **update_H(double **prev_H, double **W, int n, int k) {
     free_update_H_matrices(w_h_mult, h_t, h_h_t_mult, h_h_t_h_mult);
     return next_H;
 }   
-
 
 
 double frobenius_norm_squared(double **matrix, int n, int k) {
@@ -106,6 +113,7 @@ void converge_H_memory_freer(double **prev_H, double **cur_H, double **distance_
     free_continuous_matrix(distance_matrix);
 }
 
+
 double **converge_H(double **initial_H, double **W, int n, int k) {
     /* Continuously updates H until either convergence or until reaching max iterations, as per project instructions. Returns NULL on error.
     Input: 
@@ -147,11 +155,6 @@ double **converge_H(double **initial_H, double **W, int n, int k) {
     return cur_H;
 }
 
-typedef struct datapoints_wrapper {
-    double **datapoints;
-    int num_points;
-    int dimension;
-} datapoints_wrapper;
 
 void datapoints_on_error_handler(datapoints_wrapper *datapoints){
     /* Function to handle deallocating datapoints memory in case of error. Includes print message.
@@ -162,6 +165,7 @@ void datapoints_on_error_handler(datapoints_wrapper *datapoints){
     free_matrix(datapoints->datapoints, datapoints->num_points);
     free(datapoints);
 }
+
 
 void invalid_file_read_error_handler(FILE *file, datapoints_wrapper *wrapper, int row) {
     /* Function to handle deallocating datapoints memory and file memory in case of error. Fully handles error's by deallocating memory and exiting.
@@ -176,6 +180,7 @@ void invalid_file_read_error_handler(FILE *file, datapoints_wrapper *wrapper, in
     exit(EXIT_FAILURE);
 }
 
+
 void invalid_file_read_error_handler_simple_case(FILE *file, datapoints_wrapper *wrapper) {
     /* Function to handle deallocating datapoints memory and file memory in case of error. Fully handles error's by deallocating memory and exiting.
     Input: 
@@ -186,6 +191,7 @@ void invalid_file_read_error_handler_simple_case(FILE *file, datapoints_wrapper 
     datapoints_on_error_handler(wrapper); 
     exit(EXIT_FAILURE);
 }
+
 
 datapoints_wrapper* initialize_data(const char *filename) {
     /* Initializes a datapoints wrapper in order to read datapoints from file. Fully handles errors by deallocating memory and exiting program.
@@ -220,6 +226,7 @@ datapoints_wrapper* initialize_data(const char *filename) {
     fclose(file);
     return wrapper;
 }
+
 
 void determine_data_dimension(FILE *file, datapoints_wrapper *wrapper) {
     /* Reads the first data line to determine point dimension and stores it in the wrapper. Fully handles error's by deallocating memory and exiting.
@@ -261,6 +268,7 @@ void determine_data_dimension(FILE *file, datapoints_wrapper *wrapper) {
     wrapper->dimension = cols;
 }
 
+
 void read_and_store_datapoints(FILE *file, datapoints_wrapper *wrapper) {
     /* Reads data points from file, allocates rows, and stores values. Exits on error.
     Input:
@@ -295,6 +303,7 @@ void read_and_store_datapoints(FILE *file, datapoints_wrapper *wrapper) {
     }
 }
 
+
 void populate_data(datapoints_wrapper *wrapper, const char *filename) {
     /* Main function to populate datapoints wrapper from file. Orchestrates dimension determination and data reading via helpers. 
     Fully handles error's by deallocating memory and exiting.   
@@ -319,6 +328,7 @@ void populate_data(datapoints_wrapper *wrapper, const char *filename) {
     return; 
 }
 
+
 void sym(datapoints_wrapper *datapoints) {
     /* Wrapper function to calculate similarity matrix as per project instructions. Fully handles errors by deallocating memory and exiting.
     Input: 
@@ -335,6 +345,7 @@ void sym(datapoints_wrapper *datapoints) {
     print_matrix(sym_matrix, n, n);
     free_continuous_matrix(sym_matrix);
 }
+
 
 void ddg(datapoints_wrapper *datapoints) {
     /* Wrapper function to calculate diagonal matrix as per project instructions. Fully handles errors by deallocating memory and exiting.
@@ -360,6 +371,7 @@ void ddg(datapoints_wrapper *datapoints) {
     free_continuous_matrix(sym_matrix);
     free_continuous_matrix(diag_matrix);
 }
+
 
 void norm(datapoints_wrapper *datapoints) {
     /* Wrapper function to calculate norm matrix as per project instructions. Fully handles errors by deallocating memory and exiting.

@@ -13,6 +13,7 @@ typedef struct c_matrix_wrapper {
     Py_ssize_t cols;
 } c_matrix_wrapper;
 
+
 void py_matrix_to_c_matrix_error_handler(c_matrix_wrapper *wrapper, int cur_num_rows) {
     /* Function to handle deallocating memory in case of error. 
     Input: 
@@ -24,6 +25,7 @@ void py_matrix_to_c_matrix_error_handler(c_matrix_wrapper *wrapper, int cur_num_
     }
     free(wrapper);
 }
+
 
 c_matrix_wrapper *py_matrix_to_c_matrix(PyObject *matrix_py_ptr) {
     /* Converts python matrix to c matrix. Returns NULL on error.
@@ -76,11 +78,8 @@ PyObject *c_matrix_to_py_matrix(double **matrix, Py_ssize_t m, Py_ssize_t n) {
     Returns:
         Created python matrix equivalent of given C matrix.
     */
-    PyObject *matrix_py;
-    PyObject *temp_matrix_row_py;
-    PyObject *matrix_entry_py;
-    Py_ssize_t i;
-    Py_ssize_t j;
+    PyObject *matrix_py, *temp_matrix_row_py, *matrix_entry_py;
+    Py_ssize_t i, j;
     matrix_py = PyList_New(m);
     for (i = 0; i < m; i++) {
         temp_matrix_row_py = PyList_New(n);
@@ -92,6 +91,7 @@ PyObject *c_matrix_to_py_matrix(double **matrix, Py_ssize_t m, Py_ssize_t n) {
     }
     return matrix_py;
 }
+
 
 void wrapper_function_memory_deallocator(double **sim_matrix, double **diag_matrix, double **normal_matrix, double **symnmf_matrix, c_matrix_wrapper *matrix_wrapper_1, c_matrix_wrapper *matrix_wrapper_2) {
     /* Frees up main project matrices and datapoints wrapper for convenience. 
@@ -117,6 +117,7 @@ void wrapper_function_memory_deallocator(double **sim_matrix, double **diag_matr
     }
 }
 
+
 void wrapper_function_error_handler(double **sim_matrix, double **diag_matrix, double **normal_matrix, double **symnmf_matrix, c_matrix_wrapper *matrix_wrapper_1, c_matrix_wrapper *matrix_wrapper_2) {
     /* Handles errors in project's main wrapper functions by deallocating memory, printing standard error message and exiting program.
     Input: 
@@ -131,7 +132,6 @@ void wrapper_function_error_handler(double **sim_matrix, double **diag_matrix, d
     wrapper_function_memory_deallocator(sim_matrix, diag_matrix, normal_matrix, symnmf_matrix, matrix_wrapper_1, matrix_wrapper_2);
     exit(EXIT_FAILURE);
 }
-
 
 
 static PyObject* sym_c_wrapper(PyObject *self, PyObject *args) {
@@ -167,12 +167,12 @@ static PyObject* sym_c_wrapper(PyObject *self, PyObject *args) {
     return sym_matrix_py_ptr;
 }
 
+
 static PyObject* diag_c_wrapper(PyObject *self, PyObject *args) {
     /* Python-C Extension wrapper for calculating diagonal matrix in C and returning it to Python program. Fully handles error by deallocating memory and exiting program.
     Input: 
         - PyObject *self: reference to wrapper.
-        - PyObject *args: Python arguments calling c function. 
-        
+        - PyObject *args: Python arguments calling c function.     
     Returns:
         Python diagonal matrix
     */
@@ -205,6 +205,7 @@ static PyObject* diag_c_wrapper(PyObject *self, PyObject *args) {
     wrapper_function_memory_deallocator(sim_matrix, diag_matrix, NULL, NULL, datapoints_wrapper, NULL);
     return diag_matrix_py_ptr;;
 }
+
 
 static PyObject* norm_c_wrapper(PyObject *self, PyObject *args) {
     /* Python-C Extension wrapper for calculating norm matrix in C and returning it to Python program. Fully handles errors by deallocating memory and exiting program.
@@ -283,6 +284,7 @@ static PyObject* symnmf_c_wrapper(PyObject *self, PyObject *args) {
     return symnmf_matrix_py_ptr;
 }
 
+
 static PyMethodDef SymNMFMethods[] = {
     {
         "sym", 
@@ -319,6 +321,7 @@ static struct PyModuleDef SymNMFModule = {
     -1,
     SymNMFMethods
   };
+  
   
 PyMODINIT_FUNC PyInit_symnmf_c(void) {
     /* Python-C interface module creation, created as shown in class.

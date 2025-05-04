@@ -17,6 +17,7 @@ double matrix_row_sum(double row[], int num_points) {
     return sum;
 }
 
+
 double **diagonal_matrix(double **similarity_matrix, int num_points) {
     /* Creates diagonal matrix as per project instructions. Returns NULL on error.
     Input: 

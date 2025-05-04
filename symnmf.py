@@ -2,7 +2,7 @@ import argparse
 import os
 import numpy as np
 import math
-from typing import List, Union
+from typing import List
 import symnmf_c
 import sys
 
@@ -16,20 +16,6 @@ def pretty_print(matrix: List[List[float]]):
     for i in range(len(matrix)):
         print(",".join(map(lambda x:  f'{x:.4f}', matrix[i])))
 
-def euclidean_distance(point: List[float], other: List[float]) -> float:
-    """Calculates euclidean distance of two points
-
-    Args:
-        point (List[List[float]]): Point 1 we are trying to calculate euclidean distance to other point
-        other (List[List[float]]): Point 2 we are trying to calculate euclidean distance to point
-
-    Returns:
-        float: euclidean distance of the two points
-    """
-    total = 0
-    for i in range(len(point)):
-        total += (point[i] - other[i]) * (point[i] - other[i])
-    return math.sqrt(total)
 
 def initialize_H(norm_matrix: List[List[float]], K: int) -> List[List[float]]:
     """Creates initial H matrix as per project specifications, uses np random seed 1234.
@@ -49,7 +35,6 @@ def initialize_H(norm_matrix: List[List[float]], K: int) -> List[List[float]]:
     H = np.random.uniform(0, upper_bound, size=(dimension, K))
     return H.tolist()
     
-
 
 def parse() -> argparse.Namespace:
     """Parsing Function for user input
@@ -88,6 +73,7 @@ def read_file(filepath: str) -> List[List[float]]:
             points.append(point)
     return points
 
+
 def sym(points: List[List[float]]) -> List[List[float]]:
     """Python wrapper function to calculate similarity matrix by calling appropriate C module function.
     Args:
@@ -96,6 +82,7 @@ def sym(points: List[List[float]]) -> List[List[float]]:
         List[List[float]]: Resultant similarity matrix
     """
     return symnmf_c.sym(points)
+
 
 def diag(points: List[List[float]]) -> List[List[float]]:
     """Python wrapper function to calculate diagonal matrix by calling appropriate C module function.
@@ -106,6 +93,7 @@ def diag(points: List[List[float]]) -> List[List[float]]:
     """
     return symnmf_c.diag(points)
 
+
 def norm(points: List[List[float]]) -> List[List[float]]:
     """Python wrapper function to calculate norm matrix by calling appropriate C module function.
     Args:
@@ -114,6 +102,7 @@ def norm(points: List[List[float]]) -> List[List[float]]:
         List[List[float]]: Resultant norm matrix
     """
     return symnmf_c.norm(points)
+
 
 def nmf(K: int, points: List[List[float]]) -> List[List[float]]:
     """Python wrapper function to calculate symnmf matrix by calling appropriate C module function.
