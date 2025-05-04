@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdlib.h>
 #include "utils.h"
 
 double euclidean_distance_squared(double point[], double other_point[], int point_dimension) {
@@ -13,14 +14,14 @@ double euclidean_distance_squared(double point[], double other_point[], int poin
     int i;
     double total = 0.0;
     for (i = 0; i < point_dimension; i++) {
-        total += pow(point[i] - other_point[i], 2);
+        total += (point[i] - other_point[i]) * (point[i] - other_point[i]);
     }
     return total;
 }
 
 
 double **similarity_matrix(double **datapoints, int num_points, int point_dimension) {
-    /* Creates similarity matrix as per project instructions
+    /* Creates similarity matrix as per project instructions. Returns NULL on error.
     Input: 
         - double Datapoints[][]: 2D Array, each element in it is a point who is itself an array of coordinates.datapoints
         - int num_points: Number of points in Datapoints, this is also the size of the similarity matrix as each entry in it corresponds to a point
@@ -35,13 +36,15 @@ double **similarity_matrix(double **datapoints, int num_points, int point_dimens
     double distance_squared;
 
     sym_matrix = continuous_matrix_creation(num_points, num_points);
-
+    if (sym_matrix == NULL) {
+        return NULL;
+    }
     for (i = 0; i < num_points; i++) {
         for (j = 0; j < num_points; j++) {
             /* Calloc instantiates all elements to zero, therefore no need to set a_ii = 0 manually */
             if (i != j) {
                 distance_squared = euclidean_distance_squared(datapoints[i], datapoints[j], point_dimension);
-                sym_matrix[i][j] = exp(-(distance_squared / 2));
+                sym_matrix[i][j] = exp(-(distance_squared / 2.0));
             }
 
         }
