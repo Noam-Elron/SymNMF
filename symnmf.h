@@ -1,4 +1,6 @@
 
+typedef struct datapoints_wrapper datapoints_wrapper;
+
 void free_update_H_matrices(double **w_h_mult, double **h_t, double **h_h_t_mult, double **h_h_t_h_mult);
 
 double **update_H(double **prev_H, double **W, int n, int k);
@@ -8,8 +10,6 @@ double frobenius_norm_squared(double **matrix, int m, int n);
 void converge_H_memory_freer(double **prev_H, double **distance_matrix);
 
 double **converge_H(double **initial_H, double **W, int n, int k);
-
-typedef struct datapoints_wrapper datapoints_wrapper;
 
 void datapoints_on_error_handler(datapoints_wrapper *datapoints);
 

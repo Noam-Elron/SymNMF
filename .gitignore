@@ -12,3 +12,4 @@ test
 __pycache__/analysis.cpython-310.pyc
 __pycache__/kmeans_hw1.cpython-310.pyc
 symnmf_c.cpython-310-x86_64-linux-gnu.so
+__pycache__/kmeans.cpython-310.pyc

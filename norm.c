@@ -26,7 +26,6 @@ double **diagonal_matrix_multiplication(double **matrix, double **diagonal_matri
 }
 
 
-
 double **diagonal_matrix_exponentiation(double **diagonal_matrix, int matrix_dimension) {
     /* Helper function for norm to calculate result of calculating exponent of diagonal matrix. Modifies Input.
     Input: 
