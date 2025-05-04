@@ -4,6 +4,7 @@ import numpy as np
 import math
 from typing import List, Union
 import symnmf_c
+import sys
 
 
 def pretty_print(matrix: List[List[float]]):
@@ -14,8 +15,6 @@ def pretty_print(matrix: List[List[float]]):
     """
     for i in range(len(matrix)):
         print(",".join(map(lambda x:  f'{x:.4f}', matrix[i])))
-
-
 
 def euclidean_distance(point: List[float], other: List[float]) -> float:
     """Calculates euclidean distance of two points
@@ -29,7 +28,7 @@ def euclidean_distance(point: List[float], other: List[float]) -> float:
     """
     total = 0
     for i in range(len(point)):
-        total += pow((point[i] - other[i]), 2)
+        total += (point[i] - other[i]) * (point[i] - other[i])
     return math.sqrt(total)
 
 def initialize_H(norm_matrix: List[List[float]], K: int) -> List[List[float]]:
@@ -46,11 +45,8 @@ def initialize_H(norm_matrix: List[List[float]], K: int) -> List[List[float]]:
     m = np.mean(norm_matrix)
     dimension = len(norm_matrix)
     H = []
-
-    for i in range(dimension*K):
-        val = np.random.uniform(0, 2 * math.sqrt(m / K))
-        H.append(val)
-    H = np.reshape(H, (dimension, K))
+    upper_bound = 2 * np.sqrt(m / K)
+    H = np.random.uniform(0, upper_bound, size=(dimension, K))
     return H.tolist()
     
 
@@ -64,6 +60,11 @@ def parse() -> argparse.Namespace:
     parser.add_argument('K', type=str)
     parser.add_argument('goal', type=str)
     parser.add_argument('file_name', type=str)
+
+    if len(sys.argv) != 4:
+        print("An Error Has Occurred")
+        exit(1)
+
     return parser.parse_args()
 
 
@@ -79,7 +80,11 @@ def read_file(filepath: str) -> List[List[float]]:
         for line in file:
             line = line.strip()
             point = line.split(",")
-            point = list(map(float, point))
+            try:
+                point = list(map(float, point))
+            except ValueError:
+                print("An Error Has Occurred")
+                exit(1)
             points.append(point)
     return points
 
@@ -129,28 +134,28 @@ def main():
     """
     args: argparse.Namespace = parse()
     K, goal, file_name = args.K, args.goal, args.file_name
-    
-    try:
-        K = int(K)
-        filepath = os.path.join(os.path.join(os.getcwd()), file_name)
-
-    except ValueError:
-        print("An Error Has Occurred")
-        return
-    
+    filepath = os.path.join(os.path.join(os.getcwd()), file_name)
     points = read_file(filepath)
 
-    if K <= 1 or K >= len(points):
-        print("An Error Has Occurred")
-        return
-
     goals_mapping = {"symnmf": 0, "sym": 1, "ddg": 2, "norm": 3}
-
     if goal not in goals_mapping:
         print("An Error Has Occurred")
         return
-
+    
     if goals_mapping[goal] == 0:
+        try:
+            K = float(K)
+            if K != int(K):
+                raise ValueError()
+            K = int(K)
+            
+        except ValueError:
+            print("An Error Has Occurred")
+            return
+        
+        if K <= 1 or K >= len(points):
+            print("An Error Has Occurred")
+            return
         pretty_print(nmf(K, points))
     elif goals_mapping[goal] == 1:
         pretty_print(sym(points))
